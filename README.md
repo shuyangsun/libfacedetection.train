@@ -73,6 +73,12 @@ Following MMdetection training processing.
 CUDA_VISIBLE_DEVICES=0,1 bash tools/dist_train.sh ./configs/yunet_n.py 2 12345
 ```
 
+SSML version:
+
+```Shell
+OMP_NUM_THREADS=32 CUDA_VISIBLE_DEVICES=0,1 bash tools/dist_train.sh ./configs/yunet_n.py 2 12345
+```
+
 ## Detection
 
 ```Shell
@@ -165,8 +171,8 @@ We also published a paper on face detection to evaluate different methods.
 ```
 @article{facedetect-yu,
   author={Feng, Yuantao and Yu, Shiqi and Peng, Hanyang and Li, Yan-Ran and Zhang, Jianguo},
-  journal={IEEE Transactions on Biometrics, Behavior, and Identity Science}, 
-  title={Detect Faces Efficiently: A Survey and Evaluations}, 
+  journal={IEEE Transactions on Biometrics, Behavior, and Identity Science},
+  title={Detect Faces Efficiently: A Survey and Evaluations},
   year={2022},
   volume={4},
   number={1},
