@@ -7,7 +7,6 @@ from ..utils.yunet_layer import Conv4layerBlock, Conv_head
 
 @BACKBONES.register_module()
 class YuNetBackbone(nn.Module):
-
     def __init__(self, stage_channels, downsample_idx, out_idx):
         super().__init__()
         self.layer_num = len(stage_channels)
@@ -15,7 +14,7 @@ class YuNetBackbone(nn.Module):
         self.out_idx = out_idx
         self.model0 = Conv_head(*stage_channels[0])
         for i in range(1, self.layer_num):
-            self.add_module(f'model{i}', Conv4layerBlock(*stage_channels[i]))
+            self.add_module(f"model{i}", Conv4layerBlock(*stage_channels[i]))
         self.init_weights()
 
     def init_weights(self, pretrained=None):
@@ -33,7 +32,7 @@ class YuNetBackbone(nn.Module):
     def forward(self, x):
         out = []
         for i in range(self.layer_num):
-            x = self.__getattr__(f'model{i}')(x)
+            x = self.__getattr__(f"model{i}")(x)
             if i in self.out_idx:
                 out.append(x)
             if i in self.downsample_idx:

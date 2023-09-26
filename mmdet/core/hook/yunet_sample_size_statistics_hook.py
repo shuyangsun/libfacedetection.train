@@ -7,7 +7,6 @@ from mmcv.runner.hooks import HOOKS, Hook
 
 @HOOKS.register_module()
 class YuNetSampleSizeStatisticsHook(Hook):
-
     def __init__(self, out_file, save_interval=50) -> None:
         super().__init__()
         self.size_container = {}
@@ -28,7 +27,7 @@ class YuNetSampleSizeStatisticsHook(Hook):
             self.dump_json()
 
     def before_train_iter(self, runner):
-        gt_bbox_datas = runner.data_batch['gt_bboxes'].data[0]
+        gt_bbox_datas = runner.data_batch["gt_bboxes"].data[0]
         self.batch_size = len(gt_bbox_datas)
         for gt_bboxes in gt_bbox_datas:
             if len(gt_bboxes.shape) < 2:
@@ -38,9 +37,10 @@ class YuNetSampleSizeStatisticsHook(Hook):
                     self.noimg += 1
                 else:
                     for gt_bbox in gt_bboxes:
-                        w, h = int(gt_bbox[2] - gt_bbox[0]), int(gt_bbox[3] -
-                                                                 gt_bbox[1])
-                        tag = f'{w},{h}'
+                        w, h = int(gt_bbox[2] - gt_bbox[0]), int(
+                            gt_bbox[3] - gt_bbox[1]
+                        )
+                        tag = f"{w},{h}"
                         if self.size_container.get(tag, None) is None:
                             self.size_container[tag] = 1
                         else:
@@ -48,16 +48,18 @@ class YuNetSampleSizeStatisticsHook(Hook):
                         self.total_sample_num += 1
 
     def dump_json(self):
-        with open(self.out_file, 'w') as f:
+        with open(self.out_file, "w") as f:
             json.dump(
                 {
-                    'datetime:': str(datetime.now()),
-                    'Batch_size': self.batch_size,
-                    'Total_sample': self.total_sample_num,
-                    'Noimg': self.noimg,
-                    'Shapeless2': self.shapeless2,
-                    'data': self.size_container
-                }, f)
+                    "datetime:": str(datetime.now()),
+                    "Batch_size": self.batch_size,
+                    "Total_sample": self.total_sample_num,
+                    "Noimg": self.noimg,
+                    "Shapeless2": self.shapeless2,
+                    "data": self.size_container,
+                },
+                f,
+            )
 
     # def after_run(self, runner):
     #     return super().after_run(runner)

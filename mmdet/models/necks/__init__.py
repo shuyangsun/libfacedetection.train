@@ -2,4 +2,4 @@
 
 from .tfpn import TFPN
 
-__all__ = ['TFPN']
+__all__ = ["TFPN"]

@@ -7,24 +7,22 @@ from .single_stage import SingleStageDetector
 
 @DETECTORS.register_module()
 class YuNet(SingleStageDetector):
+    def __init__(
+        self, backbone, neck, bbox_head, train_cfg=None, test_cfg=None, pretrained=None
+    ):
+        super(YuNet, self).__init__(
+            backbone, neck, bbox_head, train_cfg, test_cfg, pretrained
+        )
 
-    def __init__(self,
-                 backbone,
-                 neck,
-                 bbox_head,
-                 train_cfg=None,
-                 test_cfg=None,
-                 pretrained=None):
-        super(YuNet, self).__init__(backbone, neck, bbox_head, train_cfg,
-                                    test_cfg, pretrained)
-
-    def forward_train(self,
-                      img,
-                      img_metas,
-                      gt_bboxes,
-                      gt_labels,
-                      gt_keypointss=None,
-                      gt_bboxes_ignore=None):
+    def forward_train(
+        self,
+        img,
+        img_metas,
+        gt_bboxes,
+        gt_labels,
+        gt_keypointss=None,
+        gt_bboxes_ignore=None,
+    ):
         """
         Args:
             img (Tensor): Input images of shape (N, C, H, W).
@@ -45,9 +43,9 @@ class YuNet(SingleStageDetector):
         """
         super(SingleStageDetector, self).forward_train(img, img_metas)
         x = self.extract_feat(img)
-        losses = self.bbox_head.forward_train(x, img_metas, gt_bboxes,
-                                              gt_labels, gt_keypointss,
-                                              gt_bboxes_ignore)
+        losses = self.bbox_head.forward_train(
+            x, img_metas, gt_bboxes, gt_labels, gt_keypointss, gt_bboxes_ignore
+        )
         return losses
 
     def simple_test(self, img, img_metas, rescale=False):
@@ -68,8 +66,7 @@ class YuNet(SingleStageDetector):
         outs = self.bbox_head(x)
         if torch.onnx.is_in_onnx_export():
             return outs
-        bbox_list = self.bbox_head.get_bboxes(
-            *outs, img_metas, rescale=rescale)
+        bbox_list = self.bbox_head.get_bboxes(*outs, img_metas, rescale=rescale)
         # skip post-processing when exporting to ONNX
         # if torch.onnx.is_in_onnx_export():
         #    return bbox_list

@@ -14,13 +14,15 @@ class SingleStageDetector(BaseDetector):
     output features of the backbone+neck.
     """
 
-    def __init__(self,
-                 backbone,
-                 neck=None,
-                 bbox_head=None,
-                 train_cfg=None,
-                 test_cfg=None,
-                 pretrained=None):
+    def __init__(
+        self,
+        backbone,
+        neck=None,
+        bbox_head=None,
+        train_cfg=None,
+        test_cfg=None,
+        pretrained=None,
+    ):
         super(SingleStageDetector, self).__init__()
         self.backbone = build_backbone(backbone)
         if neck is not None:
@@ -65,12 +67,9 @@ class SingleStageDetector(BaseDetector):
         outs = self.bbox_head(x)
         return outs
 
-    def forward_train(self,
-                      img,
-                      img_metas,
-                      gt_bboxes,
-                      gt_labels,
-                      gt_bboxes_ignore=None):
+    def forward_train(
+        self, img, img_metas, gt_bboxes, gt_labels, gt_bboxes_ignore=None
+    ):
         """
         Args:
             img (Tensor): Input images of shape (N, C, H, W).
@@ -91,8 +90,9 @@ class SingleStageDetector(BaseDetector):
         """
         super(SingleStageDetector, self).forward_train(img, img_metas)
         x = self.extract_feat(img)
-        losses = self.bbox_head.forward_train(x, img_metas, gt_bboxes,
-                                              gt_labels, gt_bboxes_ignore)
+        losses = self.bbox_head.forward_train(
+            x, img_metas, gt_bboxes, gt_labels, gt_bboxes_ignore
+        )
         return losses
 
     def simple_test(self, img, img_metas, rescale=False):
@@ -112,7 +112,7 @@ class SingleStageDetector(BaseDetector):
         x = self.extract_feat(img)
         outs = self.bbox_head(x)
         if torch.onnx.is_in_onnx_export():
-            print('single_stage.py in-onnx-export')
+            print("single_stage.py in-onnx-export")
             print(outs.__class__)
             cls_score, bbox_pred = outs
             for c in cls_score:
@@ -120,8 +120,7 @@ class SingleStageDetector(BaseDetector):
             for c in bbox_pred:
                 print(c.shape)
             return outs
-        bbox_list = self.bbox_head.get_bboxes(
-            *outs, img_metas, rescale=rescale)
+        bbox_list = self.bbox_head.get_bboxes(*outs, img_metas, rescale=rescale)
         # skip post-processing when exporting to ONNX
         if torch.onnx.is_in_onnx_export():
             return bbox_list
@@ -150,9 +149,10 @@ class SingleStageDetector(BaseDetector):
                 The outer list corresponds to each image. The inner list
                 corresponds to each class.
         """
-        assert hasattr(self.bbox_head, 'aug_test'), \
-            f'{self.bbox_head.__class__.__name__}' \
-            ' does not support test-time augmentation'
-        print('aug-test:', len(imgs))
+        assert hasattr(self.bbox_head, "aug_test"), (
+            f"{self.bbox_head.__class__.__name__}"
+            " does not support test-time augmentation"
+        )
+        print("aug-test:", len(imgs))
         feats = self.extract_feats(imgs)
         return [self.bbox_head.aug_test(feats, img_metas, rescale=rescale)]

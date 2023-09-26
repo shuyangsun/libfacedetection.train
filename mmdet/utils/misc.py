@@ -8,7 +8,7 @@ import mmcv
 from mmcv.utils import print_log
 
 
-def find_latest_checkpoint(path, suffix='pth'):
+def find_latest_checkpoint(path, suffix="pth"):
     """Find the latest checkpoint from the working directory.
 
     Args:
@@ -23,19 +23,19 @@ def find_latest_checkpoint(path, suffix='pth'):
                   /blob/main/ssod/utils/patch.py
     """
     if not osp.exists(path):
-        warnings.warn('The path of checkpoints does not exist.')
+        warnings.warn("The path of checkpoints does not exist.")
         return None
-    if osp.exists(osp.join(path, f'latest.{suffix}')):
-        return osp.join(path, f'latest.{suffix}')
+    if osp.exists(osp.join(path, f"latest.{suffix}")):
+        return osp.join(path, f"latest.{suffix}")
 
-    checkpoints = glob.glob(osp.join(path, f'*.{suffix}'))
+    checkpoints = glob.glob(osp.join(path, f"*.{suffix}"))
     if len(checkpoints) == 0:
-        warnings.warn('There are no checkpoints in the path.')
+        warnings.warn("There are no checkpoints in the path.")
         return None
     latest = -1
     latest_path = None
     for checkpoint in checkpoints:
-        count = int(osp.basename(checkpoint).split('_')[-1].split('.')[0])
+        count = int(osp.basename(checkpoint).split("_")[-1].split(".")[0])
         if count > latest:
             latest = count
             latest_path = checkpoint
@@ -52,18 +52,22 @@ def update_data_root(cfg, logger=None):
         cfg (mmcv.Config): The model config need to modify
         logger (logging.Logger | str | None): the way to print msg
     """
-    assert isinstance(cfg, mmcv.Config), \
-        f'cfg got wrong type: {type(cfg)}, expected mmcv.Config'
+    assert isinstance(
+        cfg, mmcv.Config
+    ), f"cfg got wrong type: {type(cfg)}, expected mmcv.Config"
 
-    if 'MMDET_DATASETS' in os.environ:
-        dst_root = os.environ['MMDET_DATASETS']
-        print_log(f'MMDET_DATASETS has been set to be {dst_root}.'
-                  f'Using {dst_root} as data root.')
+    if "MMDET_DATASETS" in os.environ:
+        dst_root = os.environ["MMDET_DATASETS"]
+        print_log(
+            f"MMDET_DATASETS has been set to be {dst_root}."
+            f"Using {dst_root} as data root."
+        )
     else:
         return
 
-    assert isinstance(cfg, mmcv.Config), \
-        f'cfg got wrong type: {type(cfg)}, expected mmcv.Config'
+    assert isinstance(
+        cfg, mmcv.Config
+    ), f"cfg got wrong type: {type(cfg)}, expected mmcv.Config"
 
     def update(cfg, src_str, dst_str):
         for k, v in cfg.items():

@@ -15,45 +15,43 @@ from mmdet.utils import update_data_root
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Browse a dataset')
-    parser.add_argument('config', help='train config file path')
+    parser = argparse.ArgumentParser(description="Browse a dataset")
+    parser.add_argument("config", help="train config file path")
     parser.add_argument(
-        '--skip-type',
+        "--skip-type",
         type=str,
-        nargs='+',
-        default=['DefaultFormatBundle', 'Normalize', 'Collect'],
-        help='skip some useless pipeline')
+        nargs="+",
+        default=["DefaultFormatBundle", "Normalize", "Collect"],
+        help="skip some useless pipeline",
+    )
     parser.add_argument(
-        '--output-dir',
+        "--output-dir",
         default=None,
         type=str,
-        help='If there is no display interface, you can save it')
-    parser.add_argument('--not-show', default=False, action='store_true')
+        help="If there is no display interface, you can save it",
+    )
+    parser.add_argument("--not-show", default=False, action="store_true")
     parser.add_argument(
-        '--show-interval',
-        type=float,
-        default=2,
-        help='the interval of show (s)')
+        "--show-interval", type=float, default=2, help="the interval of show (s)"
+    )
     parser.add_argument(
-        '--cfg-options',
-        nargs='+',
+        "--cfg-options",
+        nargs="+",
         action=DictAction,
-        help='override some settings in the used config, the key-value pair '
-        'in xxx=yyy format will be merged into config file. If the value to '
+        help="override some settings in the used config, the key-value pair "
+        "in xxx=yyy format will be merged into config file. If the value to "
         'be overwritten is a list, it should be like key="[a,b]" or key=a,b '
         'It also allows nested list/tuple values, e.g. key="[(a,b),(c,d)]" '
-        'Note that the quotation marks are necessary and that no white space '
-        'is allowed.')
+        "Note that the quotation marks are necessary and that no white space "
+        "is allowed.",
+    )
     args = parser.parse_args()
     return args
 
 
 def retrieve_data_cfg(config_path, skip_type, cfg_options):
-
     def skip_pipeline_steps(config):
-        config['pipeline'] = [
-            x for x in config.pipeline if x['type'] not in skip_type
-        ]
+        config["pipeline"] = [x for x in config.pipeline if x["type"] not in skip_type]
 
     cfg = Config.fromfile(config_path)
 
@@ -63,9 +61,10 @@ def retrieve_data_cfg(config_path, skip_type, cfg_options):
     if cfg_options is not None:
         cfg.merge_from_dict(cfg_options)
     train_data_cfg = cfg.data.train
-    while 'dataset' in train_data_cfg and train_data_cfg[
-            'type'] != 'MultiImageMixDataset':
-        train_data_cfg = train_data_cfg['dataset']
+    while (
+        "dataset" in train_data_cfg and train_data_cfg["type"] != "MultiImageMixDataset"
+    ):
+        train_data_cfg = train_data_cfg["dataset"]
 
     if isinstance(train_data_cfg, Sequence):
         [skip_pipeline_steps(c) for c in train_data_cfg]
@@ -88,44 +87,45 @@ def main():
     progress_bar = mmcv.ProgressBar(len(dataset))
 
     for item in dataset:
-        filename = os.path.join(args.output_dir,
-                                Path(item['filename']).name
-                                ) if args.output_dir is not None else None
+        filename = (
+            os.path.join(args.output_dir, Path(item["filename"]).name)
+            if args.output_dir is not None
+            else None
+        )
 
-        gt_bboxes = item['gt_bboxes']
-        gt_labels = item['gt_labels']
-        gt_masks = item.get('gt_masks', None)
+        gt_bboxes = item["gt_bboxes"]
+        gt_labels = item["gt_labels"]
+        gt_masks = item.get("gt_masks", None)
         if gt_masks is not None:
             gt_masks = mask2ndarray(gt_masks)
 
-        gt_seg = item.get('gt_semantic_seg', None)
+        gt_seg = item.get("gt_semantic_seg", None)
         if gt_seg is not None:
             pad_value = 255  # the padding value of gt_seg
             sem_labels = np.unique(gt_seg)
             all_labels = np.concatenate((gt_labels, sem_labels), axis=0)
             all_labels, counts = np.unique(all_labels, return_counts=True)
-            stuff_labels = all_labels[np.logical_and(counts < 2,
-                                                     all_labels != pad_value)]
+            stuff_labels = all_labels[
+                np.logical_and(counts < 2, all_labels != pad_value)
+            ]
             stuff_masks = gt_seg[None] == stuff_labels[:, None, None]
             gt_labels = np.concatenate((gt_labels, stuff_labels), axis=0)
-            gt_masks = np.concatenate((gt_masks, stuff_masks.astype(np.uint8)),
-                                      axis=0)
+            gt_masks = np.concatenate((gt_masks, stuff_masks.astype(np.uint8)), axis=0)
             # If you need to show the bounding boxes,
             # please comment the following line
             gt_bboxes = None
 
-        gt_kps = item.get('gt_keypointss', None)
+        gt_kps = item.get("gt_keypointss", None)
         kps_ignore = True
         if kps_ignore:
             kps = gt_kps[..., :-1]
-            kps_flag = np.mean(
-                gt_kps[..., 2], axis=1, keepdims=True).squeeze(1) > 0
+            kps_flag = np.mean(gt_kps[..., 2], axis=1, keepdims=True).squeeze(1) > 0
             gt_kps = kps[kps_flag].reshape(-1, 2)
         else:
             # kps = kps[..., :-1].reshape(num_gt, -1)
-            assert 'This dataset has kps ignore flag!'
+            assert "This dataset has kps ignore flag!"
         imshow_det_bboxes(
-            item['img'],
+            item["img"],
             gt_bboxes,
             gt_labels,
             gt_masks,
@@ -137,10 +137,11 @@ def main():
             bbox_color=dataset.PALETTE,
             text_color=(200, 200, 200),
             mask_color=dataset.PALETTE,
-            kps_color=dataset.PALETTE)
+            kps_color=dataset.PALETTE,
+        )
 
         progress_bar.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

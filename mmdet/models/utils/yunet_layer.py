@@ -2,7 +2,6 @@ import torch.nn as nn
 
 
 class ConvDPUnit(nn.Module):
-
     def __init__(
         self,
         in_channels,
@@ -12,16 +11,10 @@ class ConvDPUnit(nn.Module):
         super(ConvDPUnit, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.conv1 = nn.Conv2d(
-            in_channels, out_channels, 1, 1, 0, bias=True, groups=1)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, 1, 1, 0, bias=True, groups=1)
         self.conv2 = nn.Conv2d(
-            out_channels,
-            out_channels,
-            3,
-            1,
-            1,
-            bias=True,
-            groups=out_channels)
+            out_channels, out_channels, 3, 1, 1, bias=True, groups=out_channels
+        )
         self.withBNRelu = withBNRelu
         if withBNRelu:
             self.bn = nn.BatchNorm2d(out_channels)
@@ -37,7 +30,6 @@ class ConvDPUnit(nn.Module):
 
 
 class Conv_head(nn.Module):
-
     def __init__(
         self,
         in_channels,
@@ -48,8 +40,7 @@ class Conv_head(nn.Module):
         self.in_channels = in_channels
         self.mid_channels = mid_channels
         self.out_channels = out_channels
-        self.conv1 = nn.Conv2d(
-            in_channels, mid_channels, 3, 2, 1, bias=True, groups=1)
+        self.conv1 = nn.Conv2d(in_channels, mid_channels, 3, 2, 1, bias=True, groups=1)
         self.conv2 = ConvDPUnit(mid_channels, out_channels, True)
         self.bn1 = nn.BatchNorm2d(mid_channels)
         self.relu1 = nn.ReLU(inplace=True)
@@ -63,7 +54,6 @@ class Conv_head(nn.Module):
 
 
 class Conv4layerBlock(nn.Module):
-
     def __init__(
         self,
         in_channels,

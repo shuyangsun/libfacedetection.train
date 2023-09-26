@@ -34,11 +34,13 @@ class LoadImageFromFile:
             Defaults to ``dict(backend='disk')``.
     """
 
-    def __init__(self,
-                 to_float32=False,
-                 color_type='color',
-                 channel_order='bgr',
-                 file_client_args=dict(backend='disk')):
+    def __init__(
+        self,
+        to_float32=False,
+        color_type="color",
+        channel_order="bgr",
+        file_client_args=dict(backend="disk"),
+    ):
         self.to_float32 = to_float32
         self.color_type = color_type
         self.channel_order = channel_order
@@ -58,32 +60,34 @@ class LoadImageFromFile:
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
 
-        if results['img_prefix'] is not None:
-            filename = osp.join(results['img_prefix'],
-                                results['img_info']['filename'])
+        if results["img_prefix"] is not None:
+            filename = osp.join(results["img_prefix"], results["img_info"]["filename"])
         else:
-            filename = results['img_info']['filename']
+            filename = results["img_info"]["filename"]
 
         img_bytes = self.file_client.get(filename)
         img = mmcv.imfrombytes(
-            img_bytes, flag=self.color_type, channel_order=self.channel_order)
+            img_bytes, flag=self.color_type, channel_order=self.channel_order
+        )
         if self.to_float32:
             img = img.astype(np.float32)
 
-        results['filename'] = filename
-        results['ori_filename'] = results['img_info']['filename']
-        results['img'] = img
-        results['img_shape'] = img.shape
-        results['ori_shape'] = img.shape
-        results['img_fields'] = ['img']
+        results["filename"] = filename
+        results["ori_filename"] = results["img_info"]["filename"]
+        results["img"] = img
+        results["img_shape"] = img.shape
+        results["ori_shape"] = img.shape
+        results["img_fields"] = ["img"]
         return results
 
     def __repr__(self):
-        repr_str = (f'{self.__class__.__name__}('
-                    f'to_float32={self.to_float32}, '
-                    f"color_type='{self.color_type}', "
-                    f"channel_order='{self.channel_order}', "
-                    f'file_client_args={self.file_client_args})')
+        repr_str = (
+            f"{self.__class__.__name__}("
+            f"to_float32={self.to_float32}, "
+            f"color_type='{self.color_type}', "
+            f"channel_order='{self.channel_order}', "
+            f"file_client_args={self.file_client_args})"
+        )
         return repr_str
 
 
@@ -106,16 +110,16 @@ class LoadImageFromWebcam(LoadImageFromFile):
             dict: The dict contains loaded image and meta information.
         """
 
-        img = results['img']
+        img = results["img"]
         if self.to_float32:
             img = img.astype(np.float32)
 
-        results['filename'] = None
-        results['ori_filename'] = None
-        results['img'] = img
-        results['img_shape'] = img.shape
-        results['ori_shape'] = img.shape
-        results['img_fields'] = ['img']
+        results["filename"] = None
+        results["ori_filename"] = None
+        results["img"] = img
+        results["img_shape"] = img.shape
+        results["ori_shape"] = img.shape
+        results["img_fields"] = ["img"]
         return results
 
 
@@ -140,10 +144,12 @@ class LoadMultiChannelImageFromFiles:
             Defaults to ``dict(backend='disk')``.
     """
 
-    def __init__(self,
-                 to_float32=False,
-                 color_type='unchanged',
-                 file_client_args=dict(backend='disk')):
+    def __init__(
+        self,
+        to_float32=False,
+        color_type="unchanged",
+        file_client_args=dict(backend="disk"),
+    ):
         self.to_float32 = to_float32
         self.color_type = color_type
         self.file_client_args = file_client_args.copy()
@@ -163,13 +169,13 @@ class LoadMultiChannelImageFromFiles:
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
 
-        if results['img_prefix'] is not None:
+        if results["img_prefix"] is not None:
             filename = [
-                osp.join(results['img_prefix'], fname)
-                for fname in results['img_info']['filename']
+                osp.join(results["img_prefix"], fname)
+                for fname in results["img_info"]["filename"]
             ]
         else:
-            filename = results['img_info']['filename']
+            filename = results["img_info"]["filename"]
 
         img = []
         for name in filename:
@@ -179,26 +185,29 @@ class LoadMultiChannelImageFromFiles:
         if self.to_float32:
             img = img.astype(np.float32)
 
-        results['filename'] = filename
-        results['ori_filename'] = results['img_info']['filename']
-        results['img'] = img
-        results['img_shape'] = img.shape
-        results['ori_shape'] = img.shape
+        results["filename"] = filename
+        results["ori_filename"] = results["img_info"]["filename"]
+        results["img"] = img
+        results["img_shape"] = img.shape
+        results["ori_shape"] = img.shape
         # Set initial values for default meta_keys
-        results['pad_shape'] = img.shape
-        results['scale_factor'] = 1.0
+        results["pad_shape"] = img.shape
+        results["scale_factor"] = 1.0
         num_channels = 1 if len(img.shape) < 3 else img.shape[2]
-        results['img_norm_cfg'] = dict(
+        results["img_norm_cfg"] = dict(
             mean=np.zeros(num_channels, dtype=np.float32),
             std=np.ones(num_channels, dtype=np.float32),
-            to_rgb=False)
+            to_rgb=False,
+        )
         return results
 
     def __repr__(self):
-        repr_str = (f'{self.__class__.__name__}('
-                    f'to_float32={self.to_float32}, '
-                    f"color_type='{self.color_type}', "
-                    f'file_client_args={self.file_client_args})')
+        repr_str = (
+            f"{self.__class__.__name__}("
+            f"to_float32={self.to_float32}, "
+            f"color_type='{self.color_type}', "
+            f"file_client_args={self.file_client_args})"
+        )
         return repr_str
 
 
@@ -227,15 +236,17 @@ class LoadAnnotations(object):
             Defaults to ``dict(backend='disk')``.
     """
 
-    def __init__(self,
-                 with_bbox=True,
-                 with_label=True,
-                 with_keypoints=False,
-                 with_mask=False,
-                 with_seg=False,
-                 poly2mask=True,
-                 denorm_bbox=False,
-                 file_client_args=dict(backend='disk')):
+    def __init__(
+        self,
+        with_bbox=True,
+        with_label=True,
+        with_keypoints=False,
+        with_mask=False,
+        with_seg=False,
+        poly2mask=True,
+        denorm_bbox=False,
+        file_client_args=dict(backend="disk"),
+    ):
         self.with_bbox = with_bbox
         self.with_label = with_label
         self.with_keypoints = with_keypoints
@@ -256,25 +267,25 @@ class LoadAnnotations(object):
             dict: The dict contains loaded bounding box annotations.
         """
 
-        ann_info = results['ann_info']
-        results['gt_bboxes'] = ann_info['bboxes'].copy()
+        ann_info = results["ann_info"]
+        results["gt_bboxes"] = ann_info["bboxes"].copy()
 
         if self.denorm_bbox:
-            bbox_num = results['gt_bboxes'].shape[0]
+            bbox_num = results["gt_bboxes"].shape[0]
             if bbox_num != 0:
-                h, w = results['img_shape'][:2]
-                results['gt_bboxes'][:, 0::2] *= w
-                results['gt_bboxes'][:, 1::2] *= h
+                h, w = results["img_shape"][:2]
+                results["gt_bboxes"][:, 0::2] *= w
+                results["gt_bboxes"][:, 1::2] *= h
 
-        gt_bboxes_ignore = ann_info.get('bboxes_ignore', None)
+        gt_bboxes_ignore = ann_info.get("bboxes_ignore", None)
         if gt_bboxes_ignore is not None:
-            results['gt_bboxes_ignore'] = gt_bboxes_ignore.copy()
-            results['bbox_fields'].append('gt_bboxes_ignore')
-        results['bbox_fields'].append('gt_bboxes')
+            results["gt_bboxes_ignore"] = gt_bboxes_ignore.copy()
+            results["bbox_fields"].append("gt_bboxes_ignore")
+        results["bbox_fields"].append("gt_bboxes")
 
-        gt_is_group_ofs = ann_info.get('gt_is_group_ofs', None)
+        gt_is_group_ofs = ann_info.get("gt_is_group_ofs", None)
         if gt_is_group_ofs is not None:
-            results['gt_is_group_ofs'] = gt_is_group_ofs.copy()
+            results["gt_is_group_ofs"] = gt_is_group_ofs.copy()
 
         return results
 
@@ -288,7 +299,7 @@ class LoadAnnotations(object):
             dict: The dict contains loaded label annotations.
         """
 
-        results['gt_labels'] = results['ann_info']['labels'].copy()
+        results["gt_labels"] = results["ann_info"]["labels"].copy()
         return results
 
     def _poly2mask(self, mask_ann, img_h, img_w):
@@ -309,7 +320,7 @@ class LoadAnnotations(object):
             # we merge all parts into one mask rle code
             rles = maskUtils.frPyObjects(mask_ann, img_h, img_w)
             rle = maskUtils.merge(rles)
-        elif isinstance(mask_ann['counts'], list):
+        elif isinstance(mask_ann["counts"], list):
             # uncompressed RLE
             rle = maskUtils.frPyObjects(mask_ann, img_h, img_w)
         else:
@@ -347,17 +358,18 @@ class LoadAnnotations(object):
                 :obj:`PolygonMasks`. Otherwise, :obj:`BitmapMasks` is used.
         """
 
-        h, w = results['img_info']['height'], results['img_info']['width']
-        gt_masks = results['ann_info']['masks']
+        h, w = results["img_info"]["height"], results["img_info"]["width"]
+        gt_masks = results["ann_info"]["masks"]
         if self.poly2mask:
             gt_masks = BitmapMasks(
-                [self._poly2mask(mask, h, w) for mask in gt_masks], h, w)
+                [self._poly2mask(mask, h, w) for mask in gt_masks], h, w
+            )
         else:
             gt_masks = PolygonMasks(
-                [self.process_polygons(polygons) for polygons in gt_masks], h,
-                w)
-        results['gt_masks'] = gt_masks
-        results['mask_fields'].append('gt_masks')
+                [self.process_polygons(polygons) for polygons in gt_masks], h, w
+            )
+        results["gt_masks"] = gt_masks
+        results["mask_fields"].append("gt_masks")
         return results
 
     def _load_keypoints(self, results):
@@ -370,10 +382,10 @@ class LoadAnnotations(object):
             dict: The dict contains loaded bounding box annotations.
         """
 
-        ann_info = results['ann_info']
-        results['gt_keypointss'] = ann_info['keypointss'].copy()
+        ann_info = results["ann_info"]
+        results["gt_keypointss"] = ann_info["keypointss"].copy()
 
-        results['keypoints_fields'] = ['gt_keypointss']
+        results["keypoints_fields"] = ["gt_keypointss"]
         return results
 
     def _load_semantic_seg(self, results):
@@ -389,12 +401,12 @@ class LoadAnnotations(object):
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
 
-        filename = osp.join(results['seg_prefix'],
-                            results['ann_info']['seg_map'])
+        filename = osp.join(results["seg_prefix"], results["ann_info"]["seg_map"])
         img_bytes = self.file_client.get(filename)
-        results['gt_semantic_seg'] = mmcv.imfrombytes(
-            img_bytes, flag='unchanged').squeeze()
-        results['seg_fields'].append('gt_semantic_seg')
+        results["gt_semantic_seg"] = mmcv.imfrombytes(
+            img_bytes, flag="unchanged"
+        ).squeeze()
+        results["seg_fields"].append("gt_semantic_seg")
         return results
 
     def __call__(self, results):
@@ -424,13 +436,13 @@ class LoadAnnotations(object):
 
     def __repr__(self):
         repr_str = self.__class__.__name__
-        repr_str += f'(with_bbox={self.with_bbox}, '
-        repr_str += f'with_label={self.with_label}, '
-        repr_str += f'with_keypoints={self.with_keypoints}, '
-        repr_str += f'with_mask={self.with_mask}, '
-        repr_str += f'with_seg={self.with_seg}, '
-        repr_str += f'poly2mask={self.poly2mask}, '
-        repr_str += f'poly2mask={self.file_client_args})'
+        repr_str += f"(with_bbox={self.with_bbox}, "
+        repr_str += f"with_label={self.with_label}, "
+        repr_str += f"with_keypoints={self.with_keypoints}, "
+        repr_str += f"with_mask={self.with_mask}, "
+        repr_str += f"with_seg={self.with_seg}, "
+        repr_str += f"poly2mask={self.poly2mask}, "
+        repr_str += f"poly2mask={self.file_client_args})"
         return repr_str
 
 
@@ -452,17 +464,20 @@ class LoadPanopticAnnotations(LoadAnnotations):
             Defaults to ``dict(backend='disk')``.
     """
 
-    def __init__(self,
-                 with_bbox=True,
-                 with_label=True,
-                 with_mask=True,
-                 with_seg=True,
-                 file_client_args=dict(backend='disk')):
+    def __init__(
+        self,
+        with_bbox=True,
+        with_label=True,
+        with_mask=True,
+        with_seg=True,
+        file_client_args=dict(backend="disk"),
+    ):
         if rgb2id is None:
             raise RuntimeError(
-                'panopticapi is not installed, please install it by: '
-                'pip install git+https://github.com/cocodataset/'
-                'panopticapi.git.')
+                "panopticapi is not installed, please install it by: "
+                "pip install git+https://github.com/cocodataset/"
+                "panopticapi.git."
+            )
 
         super(LoadPanopticAnnotations, self).__init__(
             with_bbox=with_bbox,
@@ -471,7 +486,8 @@ class LoadPanopticAnnotations(LoadAnnotations):
             with_seg=with_seg,
             poly2mask=True,
             denorm_bbox=False,
-            file_client_args=file_client_args)
+            file_client_args=file_client_args,
+        )
 
     def _load_masks_and_semantic_segs(self, results):
         """Private function to load mask and semantic segmentation annotations.
@@ -491,33 +507,33 @@ class LoadPanopticAnnotations(LoadAnnotations):
         if self.file_client is None:
             self.file_client = mmcv.FileClient(**self.file_client_args)
 
-        filename = osp.join(results['seg_prefix'],
-                            results['ann_info']['seg_map'])
+        filename = osp.join(results["seg_prefix"], results["ann_info"]["seg_map"])
         img_bytes = self.file_client.get(filename)
         pan_png = mmcv.imfrombytes(
-            img_bytes, flag='color', channel_order='rgb').squeeze()
+            img_bytes, flag="color", channel_order="rgb"
+        ).squeeze()
         pan_png = rgb2id(pan_png)
 
         gt_masks = []
         gt_seg = np.zeros_like(pan_png) + 255  # 255 as ignore
 
-        for mask_info in results['ann_info']['masks']:
-            mask = (pan_png == mask_info['id'])
-            gt_seg = np.where(mask, mask_info['category'], gt_seg)
+        for mask_info in results["ann_info"]["masks"]:
+            mask = pan_png == mask_info["id"]
+            gt_seg = np.where(mask, mask_info["category"], gt_seg)
 
             # The legal thing masks
-            if mask_info.get('is_thing'):
+            if mask_info.get("is_thing"):
                 gt_masks.append(mask.astype(np.uint8))
 
         if self.with_mask:
-            h, w = results['img_info']['height'], results['img_info']['width']
+            h, w = results["img_info"]["height"], results["img_info"]["width"]
             gt_masks = BitmapMasks(gt_masks, h, w)
-            results['gt_masks'] = gt_masks
-            results['mask_fields'].append('gt_masks')
+            results["gt_masks"] = gt_masks
+            results["mask_fields"].append("gt_masks")
 
         if self.with_seg:
-            results['gt_semantic_seg'] = gt_seg
-            results['seg_fields'].append('gt_semantic_seg')
+            results["gt_semantic_seg"] = gt_seg
+            results["seg_fields"].append("gt_semantic_seg")
         return results
 
     def __call__(self, results):
@@ -569,25 +585,25 @@ class LoadProposals:
             dict: The dict contains loaded proposal annotations.
         """
 
-        proposals = results['proposals']
+        proposals = results["proposals"]
         if proposals.shape[1] not in (4, 5):
             raise AssertionError(
-                'proposals should have shapes (n, 4) or (n, 5), '
-                f'but found {proposals.shape}')
+                "proposals should have shapes (n, 4) or (n, 5), "
+                f"but found {proposals.shape}"
+            )
         proposals = proposals[:, :4]
 
         if self.num_max_proposals is not None:
-            proposals = proposals[:self.num_max_proposals]
+            proposals = proposals[: self.num_max_proposals]
 
         if len(proposals) == 0:
             proposals = np.array([[0, 0, 0, 0]], dtype=np.float32)
-        results['proposals'] = proposals
-        results['bbox_fields'].append('proposals')
+        results["proposals"] = proposals
+        results["bbox_fields"].append("proposals")
         return results
 
     def __repr__(self):
-        return self.__class__.__name__ + \
-               f'(num_max_proposals={self.num_max_proposals})'
+        return self.__class__.__name__ + f"(num_max_proposals={self.num_max_proposals})"
 
 
 @PIPELINES.register_module()
@@ -607,8 +623,8 @@ class FilterAnnotations:
         self.keep_empty = keep_empty
 
     def __call__(self, results):
-        assert 'gt_bboxes' in results
-        gt_bboxes = results['gt_bboxes']
+        assert "gt_bboxes" in results
+        gt_bboxes = results["gt_bboxes"]
         if gt_bboxes.shape[0] == 0:
             return results
         w = gt_bboxes[:, 2] - gt_bboxes[:, 0]
@@ -620,13 +636,14 @@ class FilterAnnotations:
             else:
                 return results
         else:
-            keys = ('gt_bboxes', 'gt_labels', 'gt_masks', 'gt_semantic_seg')
+            keys = ("gt_bboxes", "gt_labels", "gt_masks", "gt_semantic_seg")
             for key in keys:
                 if key in results:
                     results[key] = results[key][keep]
             return results
 
     def __repr__(self):
-        return self.__class__.__name__ + \
-               f'(min_gt_bbox_wh={self.min_gt_bbox_wh},' \
-               f'always_keep={self.always_keep})'
+        return (
+            self.__class__.__name__ + f"(min_gt_bbox_wh={self.min_gt_bbox_wh},"
+            f"always_keep={self.always_keep})"
+        )

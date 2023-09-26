@@ -7,15 +7,13 @@ from ..utils.yunet_layer import ConvDPUnit
 
 @NECKS.register_module()
 class TFPN(nn.Module):
-
     def __init__(self, in_channels, out_idx):
         super().__init__()
         self.num_layers = len(in_channels)
         self.out_idx = out_idx
         self.lateral_convs = nn.ModuleList()
         for i in range(self.num_layers):
-            self.lateral_convs.append(
-                ConvDPUnit(in_channels[i], in_channels[i], True))
+            self.lateral_convs.append(ConvDPUnit(in_channels[i], in_channels[i], True))
         self.init_weights()
 
     def init_weights(self):
@@ -37,7 +35,8 @@ class TFPN(nn.Module):
         for i in range(num_feats - 1, 0, -1):
             feats[i] = self.lateral_convs[i](feats[i])
             feats[i - 1] = feats[i - 1] + F.interpolate(
-                feats[i], scale_factor=2., mode='nearest')
+                feats[i], scale_factor=2.0, mode="nearest"
+            )
 
         feats[0] = self.lateral_convs[0](feats[0])
 
