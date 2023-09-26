@@ -14,3 +14,5 @@ torchaudio==2.0.2
 mmcv-full==1.6.0
 pycocotools==2.0.7
 yapf==0.40.1
+tensorrt==8.6.1
+opencv-python==4.7.0.72
