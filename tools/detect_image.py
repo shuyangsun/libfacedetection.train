@@ -62,6 +62,13 @@ def main():
     else:
         model.CLASSES = None
     model.eval()
+    print("*****************", type(model))
+    for k, v in model.__dict__.items():
+        print(f"{k}: {type(v)}")
+    print("model._modules:")
+    for k, v in model._modules.items():
+        print(f"{k}: {type(v)}")
+    exit()
 
     image = cv2.imread(args.image)
     det_img, det_scale = resize_img(image, "AUTO")
