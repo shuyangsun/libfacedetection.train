@@ -230,6 +230,19 @@ class YuNet_Head(BaseDenseHead, BBoxTestMixin):
             ]
             return (cls, obj, bbox, kps)
 
+        np.set_printoptions(suppress=True)
+        print(f"******** len cls_preds: {len(cls_preds)}")
+        for ele in cls_preds:
+            print(ele.shape)
+        print(f"******** len bbox_preds: {len(bbox_preds)}")
+        for ele in bbox_preds:
+            print(ele.shape)
+        print(f"******** len obj_preds: {len(obj_preds)}")
+        for ele in obj_preds:
+            print(ele.shape)
+        print(f"******** len kps_preds: {len(kps_preds)}")
+        for ele in kps_preds:
+            print(ele.shape)
         return cls_preds, bbox_preds, obj_preds, kps_preds
 
     def forward_train(
@@ -241,7 +254,7 @@ class YuNet_Head(BaseDenseHead, BBoxTestMixin):
         gt_keypointss=None,
         gt_bboxes_ignore=None,
         proposal_cfg=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Args:
