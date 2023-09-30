@@ -126,7 +126,7 @@ class MlvlPointGenerator:
         featmap_size,
         level_idx,
         dtype=torch.float32,
-        device="cuda",
+        device=None,
         with_stride=False,
     ):
         """Generate grid Points of a single level.
@@ -154,6 +154,12 @@ class MlvlPointGenerator:
             and the last dimension 4 represent
             (coord_x, coord_y, stride_w, stride_h).
         """
+        if device is None:
+            device = (
+                f"cuda:{torch.cuda.current_device()}"
+                if torch.cuda.is_available()
+                else "cpu"
+            )
         feat_h, feat_w = featmap_size
         stride_w, stride_h = self.strides[level_idx]
         shift_x = (torch.arange(0, feat_w, device=device) + self.offset) * stride_w
