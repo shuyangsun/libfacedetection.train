@@ -224,7 +224,7 @@ class AnchorGenerator:
         else:
             return yy, xx
 
-    def grid_priors(self, featmap_sizes, dtype=torch.float32, device="cuda"):
+    def grid_priors(self, featmap_sizes, dtype=torch.float32):
         """Generate grid anchors in multiple feature levels.
 
         Args:
@@ -250,9 +250,7 @@ class AnchorGenerator:
             multi_level_anchors.append(anchors)
         return multi_level_anchors
 
-    def single_level_grid_priors(
-        self, featmap_size, level_idx, dtype=torch.float32, device="cuda"
-    ):
+    def single_level_grid_priors(self, featmap_size, level_idx, dtype=torch.float32):
         """Generate grid anchors of a single level.
 
         Note:
@@ -290,9 +288,7 @@ class AnchorGenerator:
         # then (0, 1), (0, 2), ...
         return all_anchors
 
-    def sparse_priors(
-        self, prior_idxs, featmap_size, level_idx, dtype=torch.float32, device="cuda"
-    ):
+    def sparse_priors(self, prior_idxs, featmap_size, level_idx, dtype=torch.float32):
         """Generate sparse anchors according to the ``prior_idxs``.
 
         Args:
@@ -325,7 +321,7 @@ class AnchorGenerator:
 
         return priors
 
-    def grid_anchors(self, featmap_sizes, device="cuda"):
+    def grid_anchors(self, featmap_sizes):
         """Generate grid anchors in multiple feature levels.
 
         Args:
@@ -356,9 +352,7 @@ class AnchorGenerator:
             multi_level_anchors.append(anchors)
         return multi_level_anchors
 
-    def single_level_grid_anchors(
-        self, base_anchors, featmap_size, stride=(16, 16), device="cuda"
-    ):
+    def single_level_grid_anchors(self, base_anchors, featmap_size, stride=(16, 16)):
         """Generate grid anchors of a single level.
 
         Note:
@@ -400,7 +394,7 @@ class AnchorGenerator:
         # then (0, 1), (0, 2), ...
         return all_anchors
 
-    def valid_flags(self, featmap_sizes, pad_shape, device="cuda"):
+    def valid_flags(self, featmap_sizes, pad_shape):
         """Generate valid flags of anchors in multiple feature levels.
 
         Args:
@@ -429,9 +423,7 @@ class AnchorGenerator:
             multi_level_flags.append(flags)
         return multi_level_flags
 
-    def single_level_valid_flags(
-        self, featmap_size, valid_size, num_base_anchors, device="cuda"
-    ):
+    def single_level_valid_flags(self, featmap_size, valid_size, num_base_anchors):
         """Generate the valid flags of anchor in a single feature map.
 
         Args:
@@ -820,7 +812,7 @@ class YOLOAnchorGenerator(AnchorGenerator):
 
         return base_anchors
 
-    def responsible_flags(self, featmap_sizes, gt_bboxes, device="cuda"):
+    def responsible_flags(self, featmap_sizes, gt_bboxes):
         """Generate responsible anchor flags of grid cells in multiple scales.
 
         Args:
@@ -847,7 +839,7 @@ class YOLOAnchorGenerator(AnchorGenerator):
         return multi_level_responsible_flags
 
     def single_level_responsible_flags(
-        self, featmap_size, gt_bboxes, stride, num_base_anchors, device="cuda"
+        self, featmap_size, gt_bboxes, stride, num_base_anchors
     ):
         """Generate the responsible flags of anchor in a single feature map.
 

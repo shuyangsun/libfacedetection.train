@@ -30,9 +30,7 @@ class SyncRandomSizeHook(Hook):
             Default: 'cuda'.
     """
 
-    def __init__(
-        self, ratio_range=(14, 26), img_scale=(640, 640), interval=1, device="cuda"
-    ):
+    def __init__(self, ratio_range=(14, 26), img_scale=(640, 640), interval=1):
         warnings.warn(
             "DeprecationWarning: SyncRandomSizeHook is deprecated. "
             "Please use Resize pipeline to achieve similar "

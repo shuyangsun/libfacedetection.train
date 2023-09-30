@@ -74,7 +74,7 @@ def preproc(img, input_size, swap=(2, 0, 1)):
 
 
 def prepare_samples(
-    img_dir: str, input_size: Tuple[int, int], num_samples: int
+    img_dir: str, input_size: Tuple[int, int], num_samples: int, device: str
 ) -> torch.Tensor:
     res: List[torch.Tensor] = list()
     for root, _, files in os.walk(img_dir):
@@ -88,7 +88,7 @@ def prepare_samples(
                 continue
             img = cv2.imread(os.path.join(root, f))
             img, _ = preproc(img, input_size)
-            img = torch.from_numpy(img).unsqueeze(0).half().to("cuda:0")
+            img = torch.from_numpy(img).unsqueeze(0).half().to(device)
             res.append(img)
             if len(res) >= num_samples:
                 break
@@ -190,7 +190,9 @@ def main():
         while len(inputs) < args.batch:
             inputs.append(inputs[0])
         if args.samples is not None:
-            inputs = [prepare_samples(args.samples, (640, 640), args.batch)]
+            inputs = [
+                prepare_samples(args.samples, (640, 640), args.batch, args.device)
+            ]
 
         num_frames = int((((args.iters - 1) // args.batch) + 1) * args.batch)
         start = time.time()
@@ -225,13 +227,16 @@ def main():
             )
         )
 
+        device_postfix: str = args.device.replace(":", "")
         torch.save(
             model_trt.state_dict(),
-            os.path.join(args.out, f"yunet_n_trt_b{args.batch}.pth"),
+            os.path.join(args.out, f"yunet_n_trt_b{args.batch}_{device_postfix}.pth"),
         )
 
         print("Converted TensorRT model done.")
-        engine_file = os.path.join(args.out, f"yunet_n_trt_b{args.batch}.engine")
+        engine_file = os.path.join(
+            args.out, f"yunet_n_trt_b{args.batch}_{device_postfix}.engine"
+        )
         with open(engine_file, "wb") as f:
             f.write(model_trt.engine.serialize())
 

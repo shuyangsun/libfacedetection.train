@@ -16,7 +16,7 @@ class PointGenerator:
         else:
             return yy, xx
 
-    def grid_points(self, featmap_size, stride=16, device="cuda"):
+    def grid_points(self, featmap_size, stride=16):
         feat_h, feat_w = featmap_size
         shift_x = torch.arange(0.0, feat_w, device=device) * stride
         shift_y = torch.arange(0.0, feat_h, device=device) * stride
@@ -26,7 +26,7 @@ class PointGenerator:
         all_points = shifts.to(device)
         return all_points
 
-    def valid_flags(self, featmap_size, valid_size, device="cuda"):
+    def valid_flags(self, featmap_size, valid_size):
         feat_h, feat_w = featmap_size
         valid_h, valid_w = valid_size
         assert valid_h <= feat_h and valid_w <= feat_w
@@ -76,9 +76,7 @@ class MlvlPointGenerator:
         else:
             return yy.reshape(-1), xx.reshape(-1)
 
-    def grid_priors(
-        self, featmap_sizes, dtype=torch.float32, device="cuda", with_stride=False
-    ):
+    def grid_priors(self, featmap_sizes, dtype=torch.float32, with_stride=False):
         """Generate grid points of multiple feature levels.
 
         Args:
@@ -169,7 +167,7 @@ class MlvlPointGenerator:
         all_points = shifts.to(device)
         return all_points
 
-    def valid_flags(self, featmap_sizes, pad_shape, device="cuda"):
+    def valid_flags(self, featmap_sizes, pad_shape):
         """Generate valid flags of points of multiple feature levels.
 
         Args:
@@ -197,7 +195,7 @@ class MlvlPointGenerator:
             multi_level_flags.append(flags)
         return multi_level_flags
 
-    def single_level_valid_flags(self, featmap_size, valid_size, device="cuda"):
+    def single_level_valid_flags(self, featmap_size, valid_size):
         """Generate the valid flags of points of a single feature map.
 
         Args:
@@ -223,9 +221,7 @@ class MlvlPointGenerator:
         valid = valid_xx & valid_yy
         return valid
 
-    def sparse_priors(
-        self, prior_idxs, featmap_size, level_idx, dtype=torch.float32, device="cuda"
-    ):
+    def sparse_priors(self, prior_idxs, featmap_size, level_idx, dtype=torch.float32):
         """Generate sparse points according to the ``prior_idxs``.
 
         Args:

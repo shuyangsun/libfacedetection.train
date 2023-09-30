@@ -77,7 +77,7 @@ def reduce_mean(tensor):
     return tensor
 
 
-def obj2tensor(pyobj, device="cuda"):
+def obj2tensor(pyobj):
     """Serialize picklable python object to tensor."""
     storage = torch.ByteStorage.from_buffer(pickle.dumps(pyobj))
     return torch.ByteTensor(storage).to(device=device)
@@ -157,7 +157,7 @@ def all_reduce_dict(py_dict, op="sum", group=None, to_float=True):
     return out_dict
 
 
-def sync_random_seed(seed=None, device="cuda"):
+def sync_random_seed(seed=None):
     """Make sure different ranks share the same seed.
 
     All workers must call this function, otherwise it will deadlock.

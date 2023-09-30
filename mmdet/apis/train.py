@@ -26,7 +26,7 @@ from mmdet.utils import (
 )
 
 
-def init_random_seed(seed=None, device="cuda"):
+def init_random_seed(seed=None):
     """Initialize random seed.
 
     If the seed is not set, the seed will be automatically randomized,

@@ -186,7 +186,7 @@ def center_of_mass(mask, esp=1e-6):
     return center_h, center_w
 
 
-def generate_coordinate(featmap_sizes, device="cuda"):
+def generate_coordinate(featmap_sizes):
     """Generate the coordinate.
 
     Args:
