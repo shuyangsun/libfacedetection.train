@@ -76,7 +76,9 @@ class MlvlPointGenerator:
         else:
             return yy.reshape(-1), xx.reshape(-1)
 
-    def grid_priors(self, featmap_sizes, dtype=torch.float32, with_stride=False):
+    def grid_priors(
+        self, featmap_sizes, dtype=torch.float32, with_stride=False, device=None
+    ):
         """Generate grid points of multiple feature levels.
 
         Args:
@@ -98,6 +100,13 @@ class MlvlPointGenerator:
             and the last dimension 4 represent
             (coord_x, coord_y, stride_w, stride_h).
         """
+
+        if device is None:
+            device = (
+                f"cuda:{torch.cuda.current_device()}"
+                if torch.cuda.is_available()
+                else "cpu"
+            )
 
         assert self.num_levels == len(featmap_sizes)
         multi_level_priors = []
