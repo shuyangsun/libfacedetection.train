@@ -82,6 +82,8 @@ def main():
     with torch.no_grad():
         asdf = model(image_tensor)
         print(type(asdf))
+        for ele in asdf:
+            print(type(ele))
         exit()
         result = model.simple_test(image_tensor, img_metas, rescale=True)
     assert len(result) == 1

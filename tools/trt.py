@@ -217,7 +217,7 @@ def main():
         # model(inputs[0]) # populate model.head
         start = time.time()
         for _ in range(num_frames // args.batch):
-            pred = model_trt.feature_test(inputs[0])
+            pred = model_trt(inputs[0])
             # model.head.decode_outputs(pred, dtype=torch.float16, device="cuda:0")
         print(
             "TensorRT model fps (avg of {num} samples): {fps:.1f}".format(
