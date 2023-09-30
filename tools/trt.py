@@ -88,7 +88,7 @@ def prepare_samples(
                 continue
             img = cv2.imread(os.path.join(root, f))
             img, _ = preproc(img, input_size)
-            img = torch.from_numpy(img).unsqueeze(0).half().to(device)
+            img = torch.from_numpy(img).unsqueeze(0).to(device)
             res.append(img)
             if len(res) >= num_samples:
                 break
@@ -175,7 +175,7 @@ def main():
             model.CLASSES = checkpoint["meta"]["CLASSES"]
         else:
             model.CLASSES = None
-        model = model.eval().half().to(args.device)
+        model = model.eval().to(args.device)
 
         inputs = [
             torch.ones(
