@@ -82,8 +82,8 @@ def prepare_samples(
             f_lower = f.lower()
             if (
                 not f_lower.endswith(".png")
-                or f_lower.endswith(".jpg")
-                or f_lower.endswith(".jpeg")
+                or not f_lower.endswith(".jpg")
+                or not f_lower.endswith(".jpeg")
             ):
                 continue
             img = cv2.imread(os.path.join(root, f))
