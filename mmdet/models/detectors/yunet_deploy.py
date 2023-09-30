@@ -3,6 +3,8 @@ import torch
 from ..builder import DETECTORS
 from .single_stage_deploy import SingleStageDetectorDeploy
 
+from typing import List
+
 
 @DETECTORS.register_module()
 class YuNetDeploy(SingleStageDetectorDeploy):
@@ -13,7 +15,7 @@ class YuNetDeploy(SingleStageDetectorDeploy):
             backbone, neck, bbox_head, train_cfg, test_cfg, pretrained
         )
 
-    def forward_train(
+    def forward(
         self,
         img: torch.Tensor,
     ) -> torch.Tensor:
