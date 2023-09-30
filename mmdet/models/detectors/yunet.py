@@ -63,19 +63,10 @@ class YuNet(SingleStageDetector):
                 corresponds to each class.
         """
         x = self.extract_feat(img)
-        for i, ele in enumerate(x):
-            print("++++++++++++++++++++++++++++++", i, ele.shape)
         outs = self.bbox_head(x)
-        for i, ele in enumerate(outs[0]):
-            print("++++++++++++++++++++++++++++++", i, ele.shape)
         if torch.onnx.is_in_onnx_export():
             return outs
         bbox_list = self.bbox_head.get_bboxes(*outs, img_metas, rescale=rescale)
-        for i, ele in enumerate(bbox_list):
-            print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^", i)
-            for asdf in ele:
-                print(asdf.shape)
-                print(asdf)
 
         # skip post-processing when exporting to ONNX
         # if torch.onnx.is_in_onnx_export():
