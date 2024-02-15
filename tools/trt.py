@@ -183,12 +183,14 @@ def main():
                 3,
                 640,
                 640,
-                dtype=torch.float16,
+                dtype=torch.float32,
                 device=args.device,
             )
         ]
         while len(inputs) < args.batch:
             inputs.append(inputs[0])
+
+        inputs = [torch.concat(inputs)]
         if args.samples is not None:
             inputs = [
                 prepare_samples(args.samples, (640, 640), args.batch, args.device)
